@@ -68,7 +68,7 @@ class TextExtractor(object):
                         lang = detect(self.lines[i+j])
                     except LangDetectException, e:
                         continue
-
+                    #添加支持的语言
                     if lang == 'zh-cn':
                         self.lines[i+j] = re.sub('\\s+','',self.lines[i+j])
                         wordsNum += len(self.lines[i+j])
