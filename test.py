@@ -10,8 +10,8 @@ from Charsetdet import charsetdet
 
 te = TextExtractor()
 
-#f = urllib2.urlopen('http://www.bbc.com/news/world-asia-china-33728654')
-f = urllib2.urlopen('http://www.sxdaily.com.cn/n/2015/0731/c142-5720819-4.html')
+f = urllib2.urlopen('http://www.bbc.com/news/world-asia-china-33728654')
+#f = urllib2.urlopen('http://www.sxdaily.com.cn/n/2015/0731/c142-5720819-4.html')
 
 html = f.read()
 
