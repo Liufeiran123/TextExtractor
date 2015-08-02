@@ -5,24 +5,27 @@ __author__ = 'liuqiang'
 import chardet,urllib2
 
 from TextExtractor import TextExtractor
-import requests
+from Charsetdet import charsetdet
 
 
 te = TextExtractor()
 
-#r = requests.get('http://www.163.com')
-f = urllib2.urlopen('http://www.bbc.com/')
+#f = urllib2.urlopen('http://www.bbc.com/news/world-asia-china-33728654')
+f = urllib2.urlopen('http://www.sxdaily.com.cn/n/2015/0731/c142-5720819-4.html')
 
-a = f.read()
+html = f.read()
+
+#print a
 #ec = chardet.detect(a)
 
-c = a.decode('utf-8')
+code = charsetdet(html)
 
+if code == None:
+    code = chardet.detect(html)
 
-#print f.read()
+c = html.decode(code)
 
 print te.extract(c)
-#print r.text
 
 
 

@@ -2,6 +2,8 @@ __author__ = 'liuqiang'
 #coding=utf-8
 
 import re
+from langdetect import detect
+from langdetect.lang_detect_exception import LangDetectException
 
 class TextExtractor(object):
     def __init__(self):
@@ -13,6 +15,15 @@ class TextExtractor(object):
         self.indexDistribution = []
         self.flag = False
 
+    def langdetect(self,line):
+        return detect(line)
+
+    #def trim(self,line):
+
+
+    #def length(self,line):
+
+
     def extract(self,_html):
         return self.parse(_html,False)
 
@@ -20,7 +31,7 @@ class TextExtractor(object):
         self.flag = _flag
         self.html = self.preProcess(_html)
 
-        print self.html
+        #print self.html
 
         return self.getText()
 
@@ -32,7 +43,7 @@ class TextExtractor(object):
         source = re.sub('&.{2,7};|&#.{3,4};','',source)
         source = re.sub('<[sS][pP][aA][nN].*?>','',source)
         source = re.sub('</[sS][pP][aA][nN]>','',source)
-        source = re.sub("<[^>'\"]*['\"].*['\"].*?>",'',source)
+        #source = re.sub("<[^>'\"]*['\"].*['\"].*?>",'',source)
         source = re.sub('<.*?>','',source,flags=re.S)
         source = re.sub('\r\n','\n',source)
         return source
@@ -50,14 +61,26 @@ class TextExtractor(object):
                 empty+=1
             wordsNum = 0
             for j in range(self.blockWidth):
-                self.lines[i+j] = re.sub('\\s+','',self.lines[i+j])
-                wordsNum += len(self.lines[i+j])
+                temp = re.sub('\\s+','',self.lines[i+j])
+                if len(temp) != 0:
+                    lang = ''
+                    try:
+                        lang = detect(self.lines[i+j])
+                    except LangDetectException, e:
+                        continue
+
+                    if lang == 'zh-cn':
+                        self.lines[i+j] = re.sub('\\s+','',self.lines[i+j])
+                        wordsNum += len(self.lines[i+j])
+                    elif lang == 'en':
+                        self.lines[i+j] = self.lines[i+j].strip(' ')
+                        wordsNum += len(self.lines[i+j].split(' '))
             self.indexDistribution.append(wordsNum)
 
         _sum = sum(self.indexDistribution)
 
         self.threshold = min(100,(_sum/len(self.indexDistribution)) << (empty/(len(self.lines)-empty)>>1))
-        self.threshold = max(40, self.threshold)
+        self.threshold = max(50, self.threshold)
 
         start = -1
         end = -1
