@@ -1,5 +1,11 @@
-__author__ = 'liuqiang'
 #coding=utf-8
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+__author__ = 'liuqiang'
+
 
 import re
 from langdetect import detect
@@ -113,7 +119,7 @@ class TextExtractor(object):
                     if len(self.lines[start + j]) < 4:
                         continue
                     buffer += self.lines[start + j]
-                if 'Copyright' in buffer or u'版权所有' in buffer:
+                if 'Copyright' in buffer or '版权所有' in buffer:
                     continue
                 text += buffer
                 boolend = boolstart = False
@@ -124,7 +130,7 @@ class TextExtractor(object):
                 if len(self.lines[start+i]) < 4:
                     continue
                 buffer+=self.lines[start+i]
-            if ('Copyrght' not in buffer) or (u'版权所有' not in buffer):
+            if ('Copyrght' not in buffer) or ('版权所有' not in buffer):
                 text+=buffer
 
         return text
