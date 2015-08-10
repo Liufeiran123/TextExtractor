@@ -20,6 +20,7 @@ class TextExtractor(object):
         self.end = -1
         self.indexDistribution = []
         self.flag = False
+        self.lang = ''
 
     def langdetect(self,line):
         return detect(line)
@@ -38,6 +39,8 @@ class TextExtractor(object):
         self.html = self.preProcess(_html)
 
         #print self.html
+        if len(self.html) == 0:
+            return ''
 
         return self.getText()
 
@@ -52,6 +55,16 @@ class TextExtractor(object):
         #source = re.sub("<[^>'\"]*['\"].*['\"].*?>",'',source)
         source = re.sub('<.*?>','',source,flags=re.S)
         source = re.sub('\r\n','\n',source)
+
+        print len(source)
+
+        tmp = source[:len(source)/100]
+
+        try:
+            self.lang = detect(tmp)
+        except LangDetectException, e:
+            return ''
+
         return source
 
     def getText(self):
@@ -69,16 +82,11 @@ class TextExtractor(object):
             for j in range(self.blockWidth):
                 temp = re.sub('\\s+','',self.lines[i+j])
                 if len(temp) != 0:
-                    lang = ''
-                    try:
-                        lang = detect(self.lines[i+j])
-                    except LangDetectException, e:
-                        continue
                     #添加支持的语言
-                    if lang == 'zh-cn':
+                    if self.lang == 'zh-cn':
                         self.lines[i+j] = re.sub('\\s+','',self.lines[i+j])
                         wordsNum += len(self.lines[i+j])
-                    elif lang == 'en':
+                    elif self.lang == 'en':
                         self.lines[i+j] = self.lines[i+j].strip(' ')
                         wordsNum += len(self.lines[i+j].split(' '))
             self.indexDistribution.append(wordsNum)
